@@ -8,13 +8,16 @@ class LoginRequest {
   final String password;
   final String deviceId;
   final String deviceName;
-  final bool rememberMe = true;
+
+  @JsonKey(defaultValue: true)
+  final bool rememberMe;
 
   LoginRequest({
     required this.username,
     required this.password,
     required this.deviceId,
     required this.deviceName,
+    this.rememberMe = true
   });
 
   factory LoginRequest.fromJson(Map<String, dynamic> json) =>

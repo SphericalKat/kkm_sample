@@ -8,10 +8,14 @@ class LoginResponse {
   final String refresh;
   final DateTime expires;
 
+  @JsonKey(ignore: true)
+  final int responseCode;
+
   LoginResponse({
     required this.token,
     required this.refresh,
     required this.expires,
+    this.responseCode = 200,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) =>

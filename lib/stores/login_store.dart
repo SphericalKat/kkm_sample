@@ -26,6 +26,9 @@ abstract class _LoginStore with Store {
   @computed
   bool get canLogin => !error.hasErrors;
 
+  @observable
+  bool isLoading = false;
+
   late List<ReactionDisposer> _disposers;
 
   void setupValidations() {
@@ -40,6 +43,8 @@ abstract class _LoginStore with Store {
     if (isNull(value) || value.isEmpty) {
       error.username = 'Cannot be blank';
       return;
+    } else {
+      error.username = null;
     }
   }
 

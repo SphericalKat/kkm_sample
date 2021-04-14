@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:kkm_sample/models/login/login_request.dart';
+import 'package:kkm_sample/services/login_service.dart';
+import 'package:kkm_sample/utils/device_info.dart';
 import '../stores/login_store.dart';
 
 class LoginForm extends StatefulWidget {
@@ -22,6 +25,19 @@ class _LoginFormState extends State<LoginForm> {
   void dispose() {
     store.dispose();
     super.dispose();
+  }
+
+  void showSnackBar(BuildContext context, String content) {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(content),
+        action: SnackBarAction(
+          label: 'DISMISS',
+          onPressed: () {},
+        ),
+      ),
+    );
   }
 
   @override
@@ -72,25 +88,56 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
               const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () {
-                  store.validateAll();
-                  if (store.canLogin) {
-                    // perform login
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text(
-                            'Fix the errors in the form before proceeding'),
-                        action: SnackBarAction(label: 'DISMISS', onPressed: () {}),
-                      ),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
+              Observer(
+                builder: (_) => ElevatedButton(
+                  onPressed: () async {
+                    store.validateAll();
+                    if (store.canLogin) {
+                      store.isLoading = true;
+                      try {
+                        final deviceInfo = await getDeviceId();
+
+                        final response = await LoginService.login(
+                          LoginRequest(
+                            username: store.username,
+                            password: store.password,
+                            deviceId: deviceInfo.item1,
+                            deviceName: deviceInfo.item2,
+                          ),
+                        );
+
+                        if (response!.responseCode == 401) {
+                          showSnackBar(context,
+                              'The entered username or password is incorrect.');
+                        }
+
+                        showSnackBar(context, 'Logged in successfully!');
+                      } catch (e) {
+                        showSnackBar(
+                            context, 'Something went wrong, please try again!');
+                      }
+                    } else {
+                      showSnackBar(context,
+                          'Fix the errors in the form before proceeding!');
+                    }
+                    store.isLoading = false;
+                  },
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                  ),
+                  child: store.isLoading
+                      ? const SizedBox(
+                          height: 12,
+                          width: 12,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            backgroundColor: Colors.transparent,
+                          ),
+                        )
+                      : const Text('Login'),
                 ),
-                child: const Text('Login'),
               ),
             ],
           ),
