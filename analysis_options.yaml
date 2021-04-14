@@ -1,1 +1,14 @@
-include: package:pedantic/analysis_options.yaml
+include: package:lint/analysis_options.yaml
+
+analyzer:
+  # Excluded the generated files
+  exclude:
+    - "lib/**/*.g.dart"
+    - "lib/**/*.pb*.dart"
+
+linter:
+  rules:
+    sort_pub_dependencies: false
+    constant_identifier_names: false
+    prefer_single_quotes: true
+    prefer_relative_imports: true
