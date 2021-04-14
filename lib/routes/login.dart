@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import '../stores/login_store.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm();
@@ -8,6 +10,20 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  final LoginStore store = LoginStore();
+
+  @override
+  void initState() {
+    super.initState();
+    store.setupValidations();
+  }
+
+  @override
+  void dispose() {
+    store.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,24 +47,46 @@ class _LoginFormState extends State<LoginForm> {
                       ),
                 ),
               ),
-              const TextField(
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  hintText: 'Enter your username',
-                  border: OutlineInputBorder(),
+              Observer(
+                builder: (_) => TextField(
+                  onChanged: (value) => store.username = value,
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    hintText: 'Enter your username',
+                    errorText: store.error.username,
+                    border: const OutlineInputBorder(),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              const TextField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  hintText: 'Enter your username',
-                  border: OutlineInputBorder(),
+              Observer(
+                builder: (_) => TextField(
+                  obscureText: true,
+                  onChanged: (value) => store.password = value,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    hintText: 'Enter your password',
+                    errorText: store.error.password,
+                    border: const OutlineInputBorder(),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  store.validateAll();
+                  if (store.canLogin) {
+                    // perform login
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text(
+                            'Fix the errors in the form before proceeding'),
+                        action: SnackBarAction(label: 'DISMISS', onPressed: () {}),
+                      ),
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
                 ),
