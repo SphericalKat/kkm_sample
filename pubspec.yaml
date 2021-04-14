@@ -19,6 +19,9 @@ dependencies:
   uuid: ^3.0.4
   tuple: ^2.0.0
   validators2: ^3.0.0
+  json_annotation: ^4.0.1
+  dio: ^4.0.0
+  get_it: ^6.1.1
 
 dev_dependencies:
   flutter_test:
@@ -26,6 +29,7 @@ dev_dependencies:
   lint: ^1.5.3
   build_runner: ^1.12.2
   mobx_codegen: ^2.0.0
+  json_serializable: ^4.1.0
 
 flutter:
   uses-material-design: true
