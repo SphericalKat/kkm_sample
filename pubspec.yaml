@@ -22,6 +22,7 @@ dependencies:
   json_annotation: ^4.0.1
   dio: ^4.0.0
   get_it: ^6.1.1
+  shared_preferences: ^2.0.5
 
 dev_dependencies:
   flutter_test:

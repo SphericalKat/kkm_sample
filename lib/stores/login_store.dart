@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:kkm_sample/main.dart';
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validators2/validators.dart';
 
 import '../models/api_response.dart';
@@ -16,7 +18,7 @@ abstract class _LoginStore with Store {
   final FormErrorState error = FormErrorState();
 
   static ObservableFuture<ApiResponse<LoginResponse>> emptyResponse =
-  ObservableFuture.value(ApiResponse.empty());
+      ObservableFuture.value(ApiResponse.empty());
 
   @observable
   String username = '';
@@ -50,17 +52,27 @@ abstract class _LoginStore with Store {
 
   void Function(ApiResponse<LoginResponse>) handleResponseChanged(
       BuildContext context) {
-    return (ApiResponse<LoginResponse> resp) {
+    return (ApiResponse<LoginResponse> resp) async {
       switch (resp.status) {
         case Status.EMPTY:
           break;
         case Status.LOADING:
           break;
         case Status.COMPLETED:
-          showSnackBar(context, 'Login successful!');
-          Future.delayed(const Duration(seconds: 1), () {
-            Navigator.pushReplacementNamed(context, '/home');
-          });
+          if (resp.data != null) {
+            showSnackBar(context, 'Login successful!');
+
+            final prefs = getIt<SharedPreferences>();
+            await prefs.setString('AUTH_TOKEN', resp.data!.token);
+            await prefs.setString('REFRESH_TOKEN', resp.data!.refresh);
+
+            Future.delayed(const Duration(seconds: 1), () {
+              Navigator.pushReplacementNamed(context, '/home');
+            });
+          } else {
+            showSnackBar(context, 'Something went wrong, please try again!');
+          }
+
           break;
         case Status.ERROR:
           showSnackBar(context, resp.message.toString());
