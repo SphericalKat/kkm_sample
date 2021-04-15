@@ -58,6 +58,9 @@ abstract class _LoginStore with Store {
           break;
         case Status.COMPLETED:
           showSnackBar(context, 'Login successful!');
+          Future.delayed(const Duration(seconds: 1), () {
+            Navigator.pushReplacementNamed(context, '/home');
+          });
           break;
         case Status.ERROR:
           showSnackBar(context, resp.message.toString());

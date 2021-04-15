@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'routes/home.dart';
 import 'routes/login.dart';
 
 GetIt getIt = GetIt.instance;
@@ -24,7 +25,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const LoginForm(),
+      routes: {
+        '/': (context) => const LoginForm(),
+        '/home': (context) => const HomePage(),
+      },
     );
   }
 }
