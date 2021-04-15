@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:kkm_sample/main.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validators2/validators.dart';
 
+import '../main.dart';
 import '../models/api_response.dart';
 import '../models/login/login_request.dart';
 import '../models/login/login_response.dart';
